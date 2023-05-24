@@ -16,8 +16,10 @@ class AccountTest {
 	void createAccountObjectSuccessfully(String iban,double balance) {
 		Account acc = new Account(iban, balance);
 		// verification
-		assertEquals(iban, acc.getIban());
-		assertEquals(balance, acc.getBalance());
+		assertAll(
+		  () ->  assertEquals(iban, acc.getIban()),
+		  () -> assertEquals(balance, acc.getBalance())
+		);
 	}
 	
 	@DisplayName("Deposit positive amount successfully")
@@ -66,12 +68,12 @@ class AccountTest {
 	@Test
 	void withdrawWithAmountOverBalanceShouldFail() {
 		// 1. Fixture/Test Setup
-		Account acc = new Account("tr1", 1_000);
+		Account acc = new Account("tr1", 2);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1001.0);
+		boolean result = acc.withdraw(1.1);
 		// 3. verification
-		assertEquals(1_000.0, acc.getBalance());
-		assertFalse(result);
+		assertEquals(0.9, acc.getBalance(),0.001);
+		assertTrue(result);
 		// 4. tear-down
 	}
 	

@@ -11,10 +11,10 @@ package com.example.banking.domain;
 // Types: i) Primitive Types (byte, short, int, long, float, double, boolean, char)
 //       ii) Class -> Type
 // DDD (Domain-Driven Design) 
-public class Account {
+public class Account extends Object {
 // Members: i) Attribute/State/Data/Property
 	private String iban;
-	private double balance; // Invariance: balance >= 0
+	protected double balance; // Invariance: balance >= 0
 
 //         ii) Method/Behavior/Function
 	// constructor -> initializing object state
@@ -51,4 +51,11 @@ public class Account {
 		this.balance = this.balance - amount;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Account [iban=" + iban + ", balance=" + balance + "]";
+	}
+	
+	
 }
