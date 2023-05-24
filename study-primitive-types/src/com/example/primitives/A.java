@@ -1,5 +1,6 @@
 package com.example.primitives;
 
+@SuppressWarnings("unused")
 public class A {
 	private boolean z; // 1-B
 	//private int x; // 4-B
