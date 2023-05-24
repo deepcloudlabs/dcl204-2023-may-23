@@ -26,4 +26,10 @@ public class CheckingAccount extends Account {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "CheckingAccount [overdraftAmount=" + overdraftAmount + ", balance=" + balance + ", iban="
+				+ getIban() + "]";
+	}
+
 }

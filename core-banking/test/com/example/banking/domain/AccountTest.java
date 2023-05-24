@@ -68,12 +68,12 @@ class AccountTest {
 	@Test
 	void withdrawWithAmountOverBalanceShouldFail() {
 		// 1. Fixture/Test Setup
-		Account acc = new Account("tr1", 2);
+		Account acc = new Account("tr1", 1_000.0);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1.1);
+		boolean result = acc.withdraw(1001.1);
 		// 3. verification
-		assertEquals(0.9, acc.getBalance(),0.001);
-		assertTrue(result);
+		assertEquals(1_000.0, acc.getBalance());
+		assertFalse(result);
 		// 4. tear-down
 	}
 	
@@ -92,7 +92,19 @@ class AccountTest {
 		// 4. tear-down
 	}
 	
-	
+	@DisplayName("toString() should contain iban and balance values")
+	@Test
+	void toStringShouldContainIbanAndBalance() {
+		// 1. Fixture/Test Setup
+		Account acc = new Account("tr1", 1_000.0);
+		// 2. Calling exercise method
+		String result = acc.toString();
+		// 3. verification
+		assertTrue(result.contains("Account"));
+		assertTrue(result.contains("iban="));
+		assertTrue(result.contains("balance="));
+		// 4. tear-down
+	}	
 
 
 }
