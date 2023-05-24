@@ -34,7 +34,7 @@ class AccountTest {
 	}
 	
 	
-	@DisplayName("Deposit negative amount fails")
+	@DisplayName("Deposit negative amount should fail")
 	@Test
 	void depositWithNegativeAmountFails() {
 		// 1. Fixture/Test Setup
@@ -44,6 +44,49 @@ class AccountTest {
 		// 3. verification
 		assertEquals(1_000.0, acc.getBalance());
 		assertFalse(result);
+		// 4. tear-down
+	}
+	
+	
+	@DisplayName("Withdraw with negative amount should fail")
+	@Test
+	void withdrawWithNegativeAmountShouldFail() {
+		// 1. Fixture/Test Setup
+		Account acc = new Account("tr1", 1_000);
+		// 2. Calling exercise method
+		boolean result = acc.withdraw(-1.0);
+		// 3. verification
+		assertEquals(1_000.0, acc.getBalance());
+		assertFalse(result);
+		// 4. tear-down
+	}
+	
+	
+	@DisplayName("Withdraw with amount over balance should fail")
+	@Test
+	void withdrawWithAmountOverBalanceShouldFail() {
+		// 1. Fixture/Test Setup
+		Account acc = new Account("tr1", 1_000);
+		// 2. Calling exercise method
+		boolean result = acc.withdraw(1001.0);
+		// 3. verification
+		assertEquals(1_000.0, acc.getBalance());
+		assertFalse(result);
+		// 4. tear-down
+	}
+	
+	
+	
+	@DisplayName("Withdraw all balance successfully")
+	@Test
+	void withdrawAllBalanceShouldSucceed() {
+		// 1. Fixture/Test Setup
+		Account acc = new Account("tr1", 1_000);
+		// 2. Calling exercise method
+		boolean result = acc.withdraw(1000.0);
+		// 3. verification
+		assertEquals(0.0, acc.getBalance());
+		assertTrue(result);
 		// 4. tear-down
 	}
 	
