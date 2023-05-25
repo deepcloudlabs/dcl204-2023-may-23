@@ -1,15 +1,18 @@
 package com.example.zoo.application;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 import com.example.zoo.domain.Animal;
 import com.example.zoo.domain.Cat;
 import com.example.zoo.domain.Fish;
 import com.example.zoo.domain.Pet;
 import com.example.zoo.domain.Spider;
 
-public class ZooApplication {
+public class FunctionalZooApplication {
 
 	public static void main(String[] args) {
-		Animal []zooAnimals = {
+		var zooAnimals = List.of(
 			new Spider(),
 			new Cat(),
 			new Fish("Jaws"),
@@ -17,15 +20,11 @@ public class ZooApplication {
 			new Spider(),
 			new Cat("Free Willy"),
 			new Spider()
-		};
-		for (var animal : zooAnimals) {
-			animal.walk();
-			animal.eat();
-			if (animal instanceof Pet pet) {
-				// Pet pet = (Pet) animal;
-				pet.play();
-			}
-		}
+		);
+		Consumer<Animal> walk = Animal::walk; // method reference
+		Consumer<Animal> eat = Animal::eat; // Method reference
+		Consumer<Animal> playIfPet = animal -> { if(animal instanceof Pet pet) pet.play(); };
+		zooAnimals.forEach(walk.andThen(eat).andThen(playIfPet));
 	}
 
 }
