@@ -30,8 +30,7 @@ public class Fish extends Animal implements Pet {
 
 	@Override
 	public void walk() {
-		System.out.println("%s is swimming now...".formatted(this.name));		
+		System.out.println("%s is swimming now...".formatted(this.name));
 	}
-
 
 }
