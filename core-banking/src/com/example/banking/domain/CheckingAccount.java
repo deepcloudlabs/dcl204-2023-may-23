@@ -16,6 +16,7 @@ public class CheckingAccount extends Account {
 
 	@Override
 	public boolean withdraw(double amount) {
+		System.out.println("CheckingAccount::withdraw");
 		// validation
 		if (amount <= 0.0)
 			return false;

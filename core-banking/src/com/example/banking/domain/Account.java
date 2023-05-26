@@ -15,13 +15,23 @@ public class Account extends Object {
 // Members: i) Attribute/State/Data/Property
 	private String iban;
 	protected double balance; // Invariance: balance >= 0
-
+	private AccountStatus status = AccountStatus.ACTIVE; 
 //         ii) Method/Behavior/Function
 	// constructor -> initializing object state
 	public Account(String iban, double balance) {
 		this.iban = iban;
 		this.balance = balance;
 	}
+
+	public AccountStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AccountStatus status) {
+		this.status = status;
+	}
+
+
 
 	// getter
 	public String getIban() {
@@ -42,6 +52,7 @@ public class Account extends Object {
 	}
 
 	public boolean withdraw(double amount) {
+		System.out.println("Account::withdraw");
 		// validation
 		if (amount <= 0.0)
 			return false;

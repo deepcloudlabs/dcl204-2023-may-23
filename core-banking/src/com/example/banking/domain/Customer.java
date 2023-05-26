@@ -9,12 +9,12 @@ public class Customer {
 	private String fullname;
 	private final List<Account> accounts = new ArrayList<>();
 
-	public Customer(String identity, String fullname) {
+	public Customer(final String identity, final String fullname) {
 		this.identity = identity;
 		this.fullname = fullname;
 	}
 
-	public String getFullname() {
+	final public String getFullname() {
 		return fullname;
 	}
 
@@ -59,7 +59,7 @@ public class Customer {
 	}
 
 	public Optional<Account> removeAccount(String iban) {
-		Optional<Account> account = getAccount(iban);
+		final Optional<Account> account = getAccount(iban);
 		if (account.isEmpty())
 			return Optional.empty();
 		return this.removeAccount(account.get());			
