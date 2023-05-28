@@ -60,17 +60,21 @@ class C extends B {
 	}
 }
 
-class AA{
+@SuppressWarnings("unused")
+class AA {
 	private int x;
 
-	public AA() {}
+	public AA() {
+	}
 }
+
+@SuppressWarnings("unused")
 class BB extends AA {
 	private int y;
-	
+
 	public BB() {
 		super();
 		this.y = 108;
 	}
-	
+
 }

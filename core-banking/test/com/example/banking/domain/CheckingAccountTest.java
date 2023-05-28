@@ -2,13 +2,15 @@ package com.example.banking.domain;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+
+import com.example.banking.domain.exception.InsufficientBalanceException;
 
 class CheckingAccountTest {
 
@@ -26,13 +28,13 @@ class CheckingAccountTest {
 	@Test
 	void withdrawWithNegativeAmountShouldFail() {
 		// 1. Fixture/Test Setup
-		CheckingAccount acc = new CheckingAccount("tr1", 1_000, 500.0);
+		CheckingAccount acc = new CheckingAccount("tr1", 1_000,500);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(-1.0);
 		// 3. verification
-		assertEquals(1_000.0, acc.getBalance());
-		assertEquals(500.0, acc.getOverdraftAmount());
-		assertFalse(result);
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> acc.withdraw(-1.0)),
+				() -> assertEquals(1_000, acc.getBalance())
+		);
 		// 4. tear-down
 	}
 
@@ -42,39 +44,38 @@ class CheckingAccountTest {
 		// 1. Fixture/Test Setup
 		CheckingAccount acc = new CheckingAccount("tr1", 1_000, 500.0);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1501.1);
 		// 3. verification
-		assertEquals(1_000.0, acc.getBalance());
-		assertEquals(500.0, acc.getOverdraftAmount());
-		assertFalse(result);
+		assertAll(
+				() -> assertThrows(InsufficientBalanceException.class, () -> acc.withdraw(1501.0)),
+				() -> assertEquals(1_000, acc.getBalance())
+		);
 		// 4. tear-down
 	}
 
 	@DisplayName("Withdraw all balance successfully")
 	@Test
-	void withdrawAllBalanceShouldSucceed() {
+	void withdrawAllBalanceShouldSucceed() throws InsufficientBalanceException {
 		// 1. Fixture/Test Setup
 		CheckingAccount acc = new CheckingAccount("tr1", 1_000, 500.0);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1000.0);
+		var balance = acc.withdraw(1000.0);
 		// 3. verification
-		assertEquals(0.0, acc.getBalance());
+		assertEquals(0.0, balance);
 		assertEquals(500.0, acc.getOverdraftAmount());
-		assertTrue(result);
 		// 4. tear-down
 	}
 	
 	@DisplayName("Withdraw all possible amount successfully")
 	@Test
-	void withdrawAllPossibleAmountShouldSucceed() {
+	void withdrawAllPossibleAmountShouldSucceed() throws InsufficientBalanceException {
 		// 1. Fixture/Test Setup
 		CheckingAccount acc = new CheckingAccount("tr1", 1_000, 500.0);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1500.0);
-		// 3. verification
-		assertEquals(-500.0, acc.getBalance());
-		assertEquals(500.0, acc.getOverdraftAmount());
-		assertTrue(result);
+		var balance = acc.withdraw(1500.0);
+		assertAll(
+				() -> assertEquals(-500, balance),
+				() -> assertEquals(500, acc.getOverdraftAmount())
+		);
 		// 4. tear-down
 	}
 	

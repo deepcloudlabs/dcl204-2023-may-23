@@ -1,4 +1,12 @@
 package com.example.banking.domain;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import com.example.banking.domain.exception.InsufficientBalanceException;
+
 // Eclipse:
 
 // Alt+Shift+S: Generate Source Code
@@ -12,6 +20,19 @@ package com.example.banking.domain;
 //       ii) Class -> Type
 // DDD (Domain-Driven Design) 
 public class Account extends Object {
+	private static int counter;
+	static {
+		var props = new Properties();
+		try {
+			props.load(new FileInputStream(new File("src","application.properties")));
+			counter = Integer.parseInt(props.getProperty("initial.counter"));
+		} catch (IOException e) {
+			System.err.println("Error has occured while opening the file: %s".formatted(e.getMessage()));
+		}
+	}
+	public static int getCounter() {
+		return counter ;
+	}
 // Members: i) Attribute/State/Data/Property
 	private String iban;
 	protected double balance; // Invariance: balance >= 0
@@ -21,6 +42,7 @@ public class Account extends Object {
 	public Account(String iban, double balance) {
 		this.iban = iban;
 		this.balance = balance;
+		counter++;
 	}
 
 	public AccountStatus getStatus() {
@@ -43,24 +65,26 @@ public class Account extends Object {
 	}
 
 	// business method
-	public boolean deposit(double amount) {
+	public double deposit(double amount)  {
 		// validation
 		if (amount <= 0.0)
-			return false;
+			throw new IllegalArgumentException("Amount must be positive.");
         this.balance = this.balance + amount;
-        return true;
+        return this.balance;
 	}
 
-	public boolean withdraw(double amount) {
+	public double withdraw(double amount) throws InsufficientBalanceException {
 		System.out.println("Account::withdraw");
 		// validation
 		if (amount <= 0.0)
-			return false;
+			throw new IllegalArgumentException("Amount must be positive.");
 		// business rule
-		if (amount > this.balance)
-			return false;
+		if (amount > this.balance) {
+			double deficit = amount - this.balance;
+			throw new InsufficientBalanceException("Your balance does not cover your expenses.", deficit);
+		}
 		this.balance = this.balance - amount;
-		return true;
+		return this.balance;
 	}
 
 	@Override

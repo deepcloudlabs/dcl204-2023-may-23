@@ -12,9 +12,10 @@ import java.util.Properties;
 import com.example.banking.domain.Account;
 import com.example.banking.domain.CheckingAccount;
 import com.example.banking.domain.Customer;
+import com.example.banking.domain.exception.InsufficientBalanceException;
 
 public class BankingApplication {
-	public static void main(String[] args) throws FileNotFoundException, IOException {
+	public static void main(String[] args) throws FileNotFoundException, IOException, InsufficientBalanceException {
 		// Text + Data + Stack + Heap
 		//             Heap Object
 		Properties props = new Properties();
@@ -36,12 +37,18 @@ public class BankingApplication {
         jack.addAccount(new Account("tr3", 300_000));
         // Functional Programming: i) Higher-Order Function (HoF) 
         //                        ii) Pure Function: Lambda Expression
-        jack.getAccount("tr3").ifPresent( account -> account.withdraw(50_000) );
+        jack.getAccount("tr3").ifPresent( account -> {
+			try {
+				account.withdraw(500_000);
+			} catch (InsufficientBalanceException e) {
+				System.err.println("Error has occured while withdraw 500_000: %s, deficit:%f".formatted(e.getMessage(),e.getDeficit()));
+			}
+		} );
 		
         Optional<Account> account = jack.getAccount("tr3");
         if (account.isPresent()) {
         	Account acc = account.get();
-        	acc.withdraw(50_000);
+        	acc.withdraw(50_000_000);
         }
         System.out.println("Number of accounts: %d".formatted(jack.getNumberOfAccounts()));
         jack.removeAccount(tr1);

@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
+import com.example.banking.domain.exception.InsufficientBalanceException;
+
 // CUT: Class Under Test -> Account
 class AccountTest {
-
+ 
 	@DisplayName("Creating Account Object Successfully")
 	@ParameterizedTest
 	@CsvFileSource(delimiter = ',', resources = "accounts.csv")
@@ -28,10 +30,9 @@ class AccountTest {
 		// 1. Fixture/Test Setup
 		Account acc = new Account("tr1", 1_000);
 		// 2. Calling exercise method
-		boolean result = acc.deposit(1.0);
+		var balance = acc.deposit(1.0);
 		// 3. verification
-		assertEquals(1_001.0, acc.getBalance());
-		assertTrue(result);
+		assertEquals(1_001.0, balance);
 		// 4. tear-down
 	}
 	
@@ -42,10 +43,11 @@ class AccountTest {
 		// 1. Fixture/Test Setup
 		Account acc = new Account("tr1", 1_000);
 		// 2. Calling exercise method
-		boolean result = acc.deposit(-1.0);
 		// 3. verification
-		assertEquals(1_000.0, acc.getBalance());
-		assertFalse(result);
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> acc.deposit(-1.0)),
+				() -> assertEquals(1_000, acc.getBalance())
+		);
 		// 4. tear-down
 	}
 	
@@ -56,10 +58,11 @@ class AccountTest {
 		// 1. Fixture/Test Setup
 		Account acc = new Account("tr1", 1_000);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(-1.0);
 		// 3. verification
-		assertEquals(1_000.0, acc.getBalance());
-		assertFalse(result);
+		assertAll(
+				() -> assertThrows(IllegalArgumentException.class, () -> acc.withdraw(-1.0)),
+				() -> assertEquals(1_000, acc.getBalance())
+		);
 		// 4. tear-down
 	}
 	
@@ -70,25 +73,23 @@ class AccountTest {
 		// 1. Fixture/Test Setup
 		Account acc = new Account("tr1", 1_000.0);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1001.1);
 		// 3. verification
-		assertEquals(1_000.0, acc.getBalance());
-		assertFalse(result);
+		assertAll(
+				() -> assertThrows(InsufficientBalanceException.class, () -> acc.withdraw(1001.0)),
+				() -> assertEquals(1_000, acc.getBalance())
+		);
 		// 4. tear-down
 	}
 	
-	
-	
 	@DisplayName("Withdraw all balance successfully")
 	@Test
-	void withdrawAllBalanceShouldSucceed() {
+	void withdrawAllBalanceShouldSucceed() throws Throwable {
 		// 1. Fixture/Test Setup
 		Account acc = new Account("tr1", 1_000);
 		// 2. Calling exercise method
-		boolean result = acc.withdraw(1000.0);
+		var balance = acc.withdraw(1000.0);
 		// 3. verification
-		assertEquals(0.0, acc.getBalance());
-		assertTrue(result);
+		assertEquals(0.0, balance);
 		// 4. tear-down
 	}
 	
